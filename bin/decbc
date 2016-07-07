@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+$VERBOSE = true
+
+require 'decbc'
+
+blocksize  = ARGV.shift.to_i
+command    = ARGV.shift
+ciphertext = ARGF.tap(&:binmode).read
+
+DeCBC::Oracle.open(command) do |oracle|
+  puts DeCBC::Attack.new(
+    oracle,
+    ciphertext, blocksize / 8
+  ).plaintext
+end

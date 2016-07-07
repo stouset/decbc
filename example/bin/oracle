@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+$VERBOSE = true
+
+require 'openssl'
+
+cipher = OpenSSL::Cipher.new('AES-128-CBC')
+cipher.decrypt
+cipher.key = "\x0a\x9b\x0d\x82\x65\xcf\xdf\x62\x5d\x38\xb1\xf8\x35\xcb\x68\xa8"
+
+until STDIN.eof?
+  iv    = STDIN.read(16)
+  block = STDIN.read(16)
+
+  begin
+    cipher.iv = iv
+    cipher.update(block) + cipher.final
+
+    STDOUT.write("\x00")
+    STDOUT.flush
+  rescue
+    STDOUT.write("\x01")
+    STDOUT.flush
+  end
+end
